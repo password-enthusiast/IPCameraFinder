@@ -10,7 +10,7 @@ Phase 4 experiment with headers to create some layer of stealth
 I will attempt to use as much Vanilla javascript as possible given that this is my first full fledged project as well as the KISS rule. 
 
 Functions needed (as of 9/18/2024)
-1. input range - easy simple no planning needed
+1. take range input and generate ip list
 2. generate url - concatenate pairs with input (use math so)
 3. test url - use fetch api to test accessibility and if it exists
 4. log successful connections 
