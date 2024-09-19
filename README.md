@@ -5,10 +5,10 @@ The general idea for this project is to take a given range as input, and test ea
 Phase 1 is to just make the basic functions work
 Phase 2 add 404/403 and use those logs to avoid revisiting those non-existent or inaccessible sites
 Phase 3 add simple GUI 
+Phase 3.5 - make it as good as it can be right now without adding new functions / aspects - CURRENT PHASE
 Phase 4 experiment with headers to create some layer of stealth
+Phase 5 open
 # Manifest
-I will attempt to use as much Vanilla javascript as possible given that this is my first full fledged project as well as the KISS rule. 
-
 Functions needed (as of 9/18/2024)
 1. take range input and generate ip list
 2. generate url - concatenate pairs with input (use math so)
