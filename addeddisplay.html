@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Range Combiner and Fetch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>IP Range Combiner with Fetch API</h2>
+
+    <div class="input-group">
+        <label for="startIP">Start IP:</label>
+        <input type="text" id="startIP" placeholder="e.g. 192.168.0.1">
+    </div>
+
+    <div class="input-group">
+        <label for="endIP">End IP:</label>
+        <input type="text" id="endIP" placeholder="e.g. 192.168.0.255">
+    </div>
+
+    <div class="input-group">
+        <label for="results">Results:</label>
+        <textarea id="results" readonly></textarea>
+    </div>
+
+    <div class="input-group">
+        <label for="successful">Successful Connections:</label>
+        <textarea id="successful" readonly></textarea>
+    </div>
+
+    <div class="input-group">
+        <label for="log">Logs:</label>
+        <textarea id="log" readonly></textarea>
+    </div>
+
+    <button id="generateButton">Generate and Fetch</button>
+    <button id="startLiveUpdates">Start Live Updates</button>
+    <button id="stopLiveUpdates">Stop Live Updates</button>
+
+    <script>
+        const paths =[':8080/view/viewer_index.shtml',':8080/live/axis.cgi',':8080/cgi-bin/video.cgi',':8080/stream1.mjpg',':8080/cgi-bin/nphMotionJpeg',':8080/camera/video.mjpg',':8080/cgi-bin/videostream.cgi',':8080/axis-cgi/mjpg/video.cgi',':8080/cgi-bin/guestimage.html',':8080/view/view.shtml',':8080/view/index.shtml',':8080/control/userimage.html',':8081/view/viewer_index.shtml',':8081/live/axis.cgi',':8081/cgi-bin/video.cgi',':8081/stream1.mjpg',':8081/cgi-bin/nphMotionJpeg',':8081/camera/video.mjpg',':8081/cgi-bin/videostream.cgi',':8081/axis-cgi/mjpg/video.cgi',':8081/cgi-bin/guestimage.html',':8081/view/view.shtml',':8081/view/index.shtml',':8081/control/userimage.html',':8082/view/viewer_index.shtml',':8082/live/axis.cgi',':8082/cgi-bin/video.cgi',':8082/stream1.mjpg',':8082/cgi-bin/nphMotionJpeg',':8082/camera/video.mjpg',':8082/cgi-bin/videostream.cgi',':8082/axis-cgi/mjpg/video.cgi',':8082/cgi-bin/guestimage.html',':8082/view/view.shtml',':8082/view/index.shtml',':8082/control/userimage.html',':8083/view/viewer_index.shtml',':8083/live/axis.cgi',':8083/cgi-bin/video.cgi',':8083/stream1.mjpg',':8083/cgi-bin/nphMotionJpeg',':8083/camera/video.mjpg',':8083/cgi-bin/videostream.cgi',':8083/axis-cgi/mjpg/video.cgi',':8083/cgi-bin/guestimage.html',':8083/view/view.shtml',':8083/view/index.shtml',':8083/control/userimage.html',':8084/view/viewer_index.shtml',':8084/live/axis.cgi',':8084/cgi-bin/video.cgi',':8084/stream1.mjpg',':8084/cgi-bin/nphMotionJpeg',':8084/camera/video.mjpg',':8084/cgi-bin/videostream.cgi',':8084/axis-cgi/mjpg/video.cgi',':8084/cgi-bin/guestimage.html',':8084/view/view.shtml',':8084/view/index.shtml',':8084/control/userimage.html',':8016/view/viewer_index.shtml',':8016/live/axis.cgi',':8016/cgi-bin/video.cgi',':8016/stream1.mjpg',':8016/cgi-bin/nphMotionJpeg',':8016/camera/video.mjpg',':8016/cgi-bin/videostream.cgi',':8016/axis-cgi/mjpg/video.cgi',':8016/cgi-bin/guestimage.html',':8016/view/view.shtml',':8016/view/index.shtml',':8016/control/userimage.html',':8888/view/viewer_index.shtml',':8888/live/axis.cgi',':8888/cgi-bin/video.cgi',':8888/stream1.mjpg',':8888/cgi-bin/nphMotionJpeg',':8888/camera/video.mjpg',':8888/cgi-bin/videostream.cgi',':8888/axis-cgi/mjpg/video.cgi',':8888/cgi-bin/guestimage.html',':8888/view/view.shtml',':8888/view/index.shtml',':8888/control/userimage.html',':8000/view/viewer_index.shtml',':8000/live/axis.cgi',':8000/cgi-bin/video.cgi',':8000/stream1.mjpg',':8000/cgi-bin/nphMotionJpeg',':8000/camera/video.mjpg',':8000/cgi-bin/videostream.cgi',':8000/axis-cgi/mjpg/video.cgi',':8000/cgi-bin/guestimage.html',':8000/view/view.shtml',':8000/view/index.shtml',':8000/control/userimage.html',':8001/view/viewer_index.shtml',':8001/live/axis.cgi',':8001/cgi-bin/video.cgi',':8001/stream1.mjpg',':8001/cgi-bin/nphMotionJpeg',':8001/camera/video.mjpg',':8001/cgi-bin/videostream.cgi',':8001/axis-cgi/mjpg/video.cgi',':8001/cgi-bin/guestimage.html',':8001/view/view.shtml',':8001/view/index.shtml',':8001/control/userimage.html',':8880/view/viewer_index.shtml',':8880/live/axis.cgi',':8880/cgi-bin/video.cgi',':8880/stream1.mjpg',':8880/cgi-bin/nphMotionJpeg',':8880/camera/video.mjpg',':8880/cgi-bin/videostream.cgi',':8880/axis-cgi/mjpg/video.cgi',':8880/cgi-bin/guestimage.html',':8880/view/view.shtml',':8880/view/index.shtml',':8880/control/userimage.html',':9090/view/viewer_index.shtml',':9090/live/axis.cgi',':9090/cgi-bin/video.cgi',':9090/stream1.mjpg',':9090/cgi-bin/nphMotionJpeg',':9090/camera/video.mjpg',':9090/cgi-bin/videostream.cgi',':9090/axis-cgi/mjpg/video.cgi',':9090/cgi-bin/guestimage.html',':9090/view/view.shtml',':9090/view/index.shtml',':9090/control/userimage.html',':18004/view/viewer_index.shtml',':18004/live/axis.cgi',':18004/cgi-bin/video.cgi',':18004/stream1.mjpg',':18004/cgi-bin/nphMotionJpeg',':18004/camera/video.mjpg',':18004/cgi-bin/videostream.cgi',':18004/axis-cgi/mjpg/video.cgi',':18004/cgi-bin/guestimage.html',':18004/view/view.shtml',':18004/view/index.shtml',':18004/control/userimage.html',':10001/view/viewer_index.shtml',':10001/live/axis.cgi',':10001/cgi-bin/video.cgi',':10001/stream1.mjpg',':10001/cgi-bin/nphMotionJpeg',':10001/camera/video.mjpg',':10001/cgi-bin/videostream.cgi',':10001/axis-cgi/mjpg/video.cgi',':10001/cgi-bin/guestimage.html',':10001/view/view.shtml',':10001/view/index.shtml',':10001/control/userimage.html',':1024/view/viewer_index.shtml',':1024/live/axis.cgi',':1024/cgi-bin/video.cgi',':1024/stream1.mjpg',':1024/cgi-bin/nphMotionJpeg',':1024/camera/video.mjpg',':1024/cgi-bin/videostream.cgi',':1024/axis-cgi/mjpg/video.cgi',':1024/cgi-bin/guestimage.html',':1024/view/view.shtml',':1024/view/index.shtml',':1024/control/userimage.html',':1026/view/viewer_index.shtml',':1026/live/axis.cgi',':1026/cgi-bin/video.cgi',':1026/stream1.mjpg',':1026/cgi-bin/nphMotionJpeg',':1026/camera/video.mjpg',':1026/cgi-bin/videostream.cgi',':1026/axis-cgi/mjpg/video.cgi',':1026/cgi-bin/guestimage.html',':1026/view/view.shtml',':1026/view/index.shtml',':1026/control/userimage.html',':5552/view/viewer_index.shtml',':5552/live/axis.cgi',':5552/cgi-bin/video.cgi',':5552/stream1.mjpg',':5552/cgi-bin/nphMotionJpeg',':5552/camera/video.mjpg',':5552/cgi-bin/videostream.cgi',':5552/axis-cgi/mjpg/video.cgi',':5552/cgi-bin/guestimage.html',':5552/view/view.shtml',':5552/view/index.shtml',':5552/control/userimage.html',':8899/view/viewer_index.shtml',':8899/live/axis.cgi',':8899/cgi-bin/video.cgi',':8899/stream1.mjpg',':8899/cgi-bin/nphMotionJpeg',':8899/camera/video.mjpg',':8899/cgi-bin/videostream.cgi',':8899/axis-cgi/mjpg/video.cgi',':8899/cgi-bin/guestimage.html',':8899/view/view.shtml',':8899/view/index.shtml',':8899/control/userimage.html',':37777/view/viewer_index.shtml',':37777/live/axis.cgi',':37777/cgi-bin/video.cgi',':37777/stream1.mjpg',':37777/cgi-bin/nphMotionJpeg',':37777/camera/video.mjpg',':37777/cgi-bin/videostream.cgi',':37777/axis-cgi/mjpg/video.cgi',':37777/cgi-bin/guestimage.html',':37777/view/view.shtml',':37777/view/index.shtml',':37777/control/userimage.html',':554/view/viewer_index.shtml',':554/live/axis.cgi',':554/cgi-bin/video.cgi',':554/stream1.mjpg',':554/cgi-bin/nphMotionJpeg',':554/camera/video.mjpg',':554/cgi-bin/videostream.cgi',':554/axis-cgi/mjpg/video.cgi',':554/cgi-bin/guestimage.html',':554/view/view.shtml',':554/view/index.shtml',':554/control/userimage.html',':443/view/viewer_index.shtml',':443/live/axis.cgi',':443/cgi-bin/video.cgi',':443/stream1.mjpg',':443/cgi-bin/nphMotionJpeg',':443/camera/video.mjpg',':443/cgi-bin/videostream.cgi',':443/axis-cgi/mjpg/video.cgi',':443/cgi-bin/guestimage.html',':443/view/view.shtml',':443/view/index.shtml',':443/control/userimage.html',':80/view/viewer_index.shtml',':80/live/axis.cgi',':80/cgi-bin/video.cgi',':80/stream1.mjpg',':80/cgi-bin/nphMotionJpeg',':80/camera/video.mjpg',':80/cgi-bin/videostream.cgi',':80/axis-cgi/mjpg/video.cgi',':80/cgi-bin/guestimage.html',':80/view/view.shtml',':80/view/index.shtml',':80/control/userimage.html',':5000/view/viewer_index.shtml',':5000/live/axis.cgi',':5000/cgi-bin/video.cgi',':5000/stream1.mjpg',':5000/cgi-bin/nphMotionJpeg',':5000/camera/video.mjpg',':5000/cgi-bin/videostream.cgi',':5000/axis-cgi/mjpg/video.cgi',':5000/cgi-bin/guestimage.html',':5000/view/view.shtml',':5000/view/index.shtml',':5000/control/userimage.html',':9000/view/viewer_index.shtml',':9000/live/axis.cgi',':9000/cgi-bin/video.cgi',':9000/stream1.mjpg',':9000/cgi-bin/nphMotionJpeg',':9000/camera/video.mjpg',':9000/cgi-bin/videostream.cgi',':9000/axis-cgi/mjpg/video.cgi',':9000/cgi-bin/guestimage.html',':9000/view/view.shtml',':9000/view/index.shtml',':9000/control/userimage.html',':9090/view/viewer_index.shtml',':9090/live/axis.cgi',':9090/cgi-bin/video.cgi',':9090/stream1.mjpg',':9090/cgi-bin/nphMotionJpeg',':9090/camera/video.mjpg',':9090/cgi-bin/videostream.cgi',':9090/axis-cgi/mjpg/video.cgi',':9090/cgi-bin/guestimage.html',':9090/view/view.shtml',':9090/view/index.shtml',':9090/control/userimage.html',':9091/view/viewer_index.shtml',':9091/live/axis.cgi',':9091/cgi-bin/video.cgi',':9091/stream1.mjpg',':9091/cgi-bin/nphMotionJpeg',':9091/camera/video.mjpg',':9091/cgi-bin/videostream.cgi',':9091/axis-cgi/mjpg/video.cgi',':9091/cgi-bin/guestimage.html',':9091/view/view.shtml',':9091/view/index.shtml',':9091/control/userimage.html',':9092/view/viewer_index.shtml',':9092/live/axis.cgi',':9092/cgi-bin/video.cgi',':9092/stream1.mjpg',':9092/cgi-bin/nphMotionJpeg',':9092/camera/video.mjpg',':9092/cgi-bin/videostream.cgi',':9092/axis-cgi/mjpg/video.cgi',':9092/cgi-bin/guestimage.html',':9092/view/view.shtml',':9092/view/index.shtml',':9092/control/userimage.html',':82/view/viewer_index.shtml',':82/live/axis.cgi',':82/cgi-bin/video.cgi',':82/stream1.mjpg',':82/cgi-bin/nphMotionJpeg',':82/camera/video.mjpg',':82/cgi-bin/videostream.cgi',':82/axis-cgi/mjpg/video.cgi',':82/cgi-bin/guestimage.html',':82/view/view.shtml',':82/view/index.shtml',':82/control/userimage.html']
+;
+
+
+        // Helper to convert IP to integer
+        function ipToInt(ip) {
+            return ip.split('.').reduce((int, octet) => (int << 8) + parseInt(octet, 10), 0);
+        }
+
+        // Helper to convert integer back to IP
+        function intToIp(int) {
+            return ((int >>> 24) + '.' + (int >> 16 & 255) + '.' + (int >> 8 & 255) + '.' + (int & 255));
+        }
+
+        // Generate IP list between the start and end IP
+        function generateIPRange(startIP, endIP) {
+            let ipArray = [];
+            let start = ipToInt(startIP);
+            let end = ipToInt(endIP);
+            for (let i = start; i <= end; i++) {
+                ipArray.push(intToIp(i));
+            }
+            return ipArray;
+        }
+
+        // Combine IPs with paths and return full URL array
+        function generateCombinations(ipArray, paths) {
+            let combinations = [];
+            ipArray.forEach(ip => {
+                paths.forEach(path => {
+                    combinations.push(`http://${ip}${path}`);
+                });
+            });
+            return combinations;
+        }
+
+        // Fetch URLs and log the results
+        async function fetchURLs(urls) {
+            const logArea = document.getElementById('log');
+            const successfulArea = document.getElementById('successful');
+            logArea.value = ''; // Clear previous logs
+            successfulArea.value = ''; // Clear previous successful connections
+            const successfulConnections = [];
+            const unauthorizedLogs = [];
+
+            for (const url of urls) {
+                try {
+                    const response = await fetch(url);
+                    if (response.status === 200) {
+                        successfulArea.value += `Success: ${url}\n`;
+                        successfulConnections.push(url);
+                    } else if (response.status === 403) {
+                        logArea.value += `Unauthorized (403): ${url}\n`;
+                        unauthorizedLogs.push(url);
+                    }
+                } catch (error) {
+                    if (!error.message.includes('404')) {
+                        logArea.value += `Error: ${url} - ${error.message}\n`;
+                    }
+                }
+            }
+        }
+
+        // Main function that generates, combines, fetches, and logs the results
+        async function generateAndFetch() {
+            const startIP = document.getElementById('startIP').value;
+            const endIP = document.getElementById('endIP').value;
+            const resultsArea = document.getElementById('results');
+            resultsArea.value = ''; // Clear previous results
+
+            const ipArray = generateIPRange(startIP, endIP);
+            const combinedURLs = generateCombinations(ipArray, paths);
+            resultsArea.value = combinedURLs.join('\n'); // Display combined URLs
+
+            // Fetch each generated URL
+            await fetchURLs(combinedURLs);
+        }
+
+        // Function to handle live updates
+        let liveUpdateInterval;
+
+        function startLiveUpdates() {
+            const interval = 30000; // 30 seconds
+            liveUpdateInterval = setInterval(async () => {
+                const startIP = document.getElementById('startIP').value;
+                const endIP = document.getElementById('endIP').value;
+                const ipArray = generateIPRange(startIP, endIP);
+                const combinedURLs = generateCombinations(ipArray, paths);
+                document.getElementById('results').value = combinedURLs.join('\n');
+                await fetchURLs(combinedURLs);
+            }, interval);
+        }
+
+        function stopLiveUpdates() {
+            clearInterval(liveUpdateInterval);
+        }
+
+        // Attach the functions to button click events
+        document.getElementById('generateButton').addEventListener('click', generateAndFetch);
+        document.getElementById('startLiveUpdates').addEventListener('click', startLiveUpdates);
+        document.getElementById('stopLiveUpdates').addEventListener('click', stopLiveUpdates);
+    </script>
+
+</body>
+</html>
