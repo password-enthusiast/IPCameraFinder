@@ -1,15 +1,11 @@
 # IPCameraFinder
-My first cyber project, goal to test a given IPv4 range for IP Camera streams.
-# Abstract
-The general idea for this project is to take a given range as input, and test each address using the port:path combinations found in port_stream_pairs.txt 
-Phase 1 is to just make the basic functions work
-Phase 2 add 404/403 log and use those logs to avoid revisiting those non-existent or inaccessible sites
-Phase 3 add simple GUI 
+My first cyber project, goal to test a given IPv4 range for IP Camera streams. currently experimenting with batch scripts and logic as the only functioning scripts as of yet have been unsuccessful as far as detecting streams. i need to read a book to understand the environment better as knowing the commands and syntax without more context has me "so close yet so far"
+# abstract
+we (the program) will curl known camera streams, extract relevant keywords, curl random IP4 addresses and looking mostly for the title and redirect section of the curl response where streams can be given away. this basic funciontality is what the current goal is.
 
 # modules we need
-1. take range input and generate ip list
-2. generate url - concatenate pairs with input (use math so)
-3. test url - use curl and detect with word list
+1 generate IP address.
+2. test url - use curl and detect with word list, -- attempt to use 554 or 8080 after just regular http req?
 4. log detections 
 
    
