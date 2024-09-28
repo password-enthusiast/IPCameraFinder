@@ -6,12 +6,11 @@ Phase 1 is to just make the basic functions work
 Phase 2 add 404/403 log and use those logs to avoid revisiting those non-existent or inaccessible sites
 Phase 3 add simple GUI 
 
-# Manifest
-Functions needed (as of 9/18/2024)
+# modules we need
 1. take range input and generate ip list
 2. generate url - concatenate pairs with input (use math so)
-3. test url - use fetch api to test accessibility and if it exists
-4. log successful connections 
+3. test url - use curl and detect with word list
+4. log detections 
 
    
    
