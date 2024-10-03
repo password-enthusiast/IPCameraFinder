@@ -1,9 +1,8 @@
-set "keywords=keywords.txt"
 set "foundkeyword=false"
 
 curl %targetip% > templog.txt
 
-for %%k in (%keywords%) do (
+for %%k in (%camstreamkeywords%) do (
     findstr /i "%%k" templog.txt
     if !errorlevel! equ 0 (set "foundkeyword=true")
 )
