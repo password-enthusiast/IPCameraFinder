@@ -1,0 +1,16 @@
+@echo off
+
+set "input=templog.txt"
+set lineNum=0
+for /f "usebackq delims=" %%a in ("%input%") do (
+    set /a lineNum+=1
+    set "url=%%a"
+    
+    :: Use cURL to fetch the URL silently and save to "log-<number>.txt"
+    echo REQUESTED:!url! >> "log-!lineNum!.txt"
+    curl -s "!url!" > "log-!lineNum!.txt" 2>&1
+
+    :: Optionally log the URL processed
+)
+
+endlocal
