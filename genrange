@@ -1,0 +1,23 @@
+@echo off
+set "range=192.168.1.0/24"
+
+for /f "tokens=1,2 delims=/" %%a in ("%range%") do (
+    set "baseIP=%%a"
+    set "mask=%%b"
+)
+
+:: Convert IP to decimal
+for /f "tokens=1-4 delims=." %%a in ("%baseIP%") do (
+    set /a "ipDec=%%a*256*256*256 + %%b*256*256 + %%c*256 + %%d"
+)
+
+:: Calculate number of valid hosts and first/last valid IP
+set /a "numHosts=2**(32-mask), firstHost=ipDec+1, lastHost=ipDec+numHosts-2"
+
+:: Generate and output valid IP addresses
+for /L %%i in (!firstHost!,1,!lastHost!) do (
+    set /a "octet1=%%i>>24, octet2=(%%i>>16)&255, octet3=(%%i>>8)&255, octet4=%%i&255"
+    echo !octet1!.!octet2!.!octet3!.!octet4! > templog.txt
+)
+
+endlocal
